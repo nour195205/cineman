@@ -1,0 +1,146 @@
+{% block con %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأكيد الحجز</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b; /* أحمر مرجاني */
+            --secondary-color: #4ecdc4; /* فيروزي */
+            --accent-color: #ffe66d; /* أصفر دافئ */
+            --dark-color: #2d3436; /* رمادي غامق */
+            --light-color: #ffffff; /* أبيض */
+            --border-radius: 15px;
+            --box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(120deg, #dfe6e9 0%, #b2bec3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .confirmation {
+            max-width: 600px;
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 40px;
+            text-align: center;
+            transition: var(--transition);
+            animation: fadeIn 0.5s ease-in-out; /* تأثير ظهور */
+        }
+
+        .confirmation:hover {
+            transform: translateY(-5px); /* حركة خفيفة عند الهوفر */
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        h3 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        p {
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* زرار اختياري للرجوع */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--secondary-color);
+            color: var(--light-color);
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background: var(--primary-color);
+            color: var(--dark-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* تأثير الظهور */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* تصميم متجاوب */
+        @media (max-width: 768px) {
+            .confirmation {
+                padding: 30px;
+            }
+
+            h3 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 10px 25px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .confirmation {
+                padding: 20px;
+            }
+
+            h3 {
+                font-size: 1.3rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 8px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation">
+        <h3>تم حجز التذاكر بنجاح!</h3>
+        <p>تم حجز تذاكركم بنجاح. نتمنى لك مشاهدة ممتعة!</p>
+        <a href="{% url 'films' %}" class="btn">العودة إلى الأفلام</a>
+    </div>
+</body>
+</html>
+{% endblock con %}

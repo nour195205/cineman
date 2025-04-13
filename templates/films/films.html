@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% block con %}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة الأفلام</title>
+    <style>
+        /* الـ CSS الأصلي بتاعك */
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffe66d;
+            --dark-color: #2d3436;
+            --light-color: #ffffff;
+            --border-radius: 15px;
+            --box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(120deg, #dfe6e9 0%, #b2bec3 100%);
+            padding: 50px 20px;
+            min-height: 100vh;
+        }
+
+        .films-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .film-card {
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .film-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .film-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .film-card:hover .film-image {
+            filter: brightness(1.1);
+        }
+
+        .film-details {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .film-name {
+            color: var(--dark-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .film-details h4 {
+            color: #636e72;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--primary-color);
+            color: var(--light-color);
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: var(--transition);
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            color: var(--dark-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ستايل جديد للبحث والفرز */
+        .controls {
+            max-width: 1300px;
+            margin: 20px auto;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 12px 20px;
+            width: 300px;
+            border: 2px solid var(--primary-color);
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sort-btn {
+            padding: 12px 25px;
+            background: var(--primary-color);
+            color: var(--light-color);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .sort-btn:hover {
+            background: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        /* إخفاء الكارد لما ما يتطابقش مع البحث */
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .films-container {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- حقل البحث وزرار الفرز -->
+    <div class="controls">
+        <input type="text" id="searchInput" class="search-input" placeholder="ابحث باسم الفيلم...">
+        <button class="sort-btn" onclick="sortByRate()">ترتيب حسب التقييم</button>
+    </div>
+
+    <div class="films-container" id="container">
+        {% for x in films %}
+        {% if x.active == True %}
+        <div class="film-card" id="{{x.id}}" data-name="{{ x.name }}" data-rate="{{ x.rate }}">
+            <img src="{{ x.image.url }}" alt="{{ x.name }}" class="film-image">
+            <div class="film-details">
+                <h3 class="film-name">{{ x.name }}</h3>
+                <h4>{{ x.category }}</h4>
+                <h4>{{ x.price }} جنيه</h4>
+                <h4>التقييم: {{ x.rate }}/5</h4>
+            </div>
+            <a href="{% url 'film_details' x.name %}" class="btn">احجز الآن</a>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <script>
+        // البحث باستخدام الاسم
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.trim().toLowerCase();
+            const filmCards = document.getElementsByClassName('film-card');
+
+            Array.from(filmCards).forEach(card => {
+                const filmName = card.getAttribute('data-name').toLowerCase();
+                if (filmName.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+
+        // الفرز حسب التقييم
+        function sortByRate() {
+            const container = document.getElementById('container');
+            const filmCards = Array.from(container.getElementsByClassName('film-card'));
+
+            filmCards.sort((a, b) => {
+                const rateA = parseFloat(a.getAttribute('data-rate'));
+                const rateB = parseFloat(b.getAttribute('data-rate'));
+                return rateB - rateA; // ترتيب تنازلي (من الأعلى للأقل)
+            });
+
+            filmCards.forEach(card => container.appendChild(card));
+        }
+    </script>
+</body>
+
+</html>
+{% endblock con %}

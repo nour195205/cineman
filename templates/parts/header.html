@@ -1,0 +1,111 @@
+{% load static %}
+<style>
+/* تصميم الهيدر */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #333; /* لون خلفية داكن */
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* ظل خفيف */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+}
+
+/* تصميم زر التواصل */
+#contact {
+    background-color: #007bff; /* لون أزرق */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* تأثير عند التمرير */
+}
+
+#contact:hover {
+    background-color: #0056b3; /* لون أغمق عند التمرير */
+}
+
+/* تصميم رابط تسجيل الخروج */
+header a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+header a:hover {
+    text-decoration: underline; /* تسطير عند التمرير */
+}
+
+/* تصميم قسم التواصل */
+#ContactCon {
+    position: absolute;
+    top: 70px; /* ليظهر أسفل الهيدر */
+    right: 30px; /* محاذاة لليمين */
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* ظل خفيف */
+    text-align: center;
+}
+
+/* إخفاء القسم بشكل افتراضي */
+.disappear {
+    display: none;
+}
+
+/* تصميم الأيقونات */
+#ContactCon a {
+    margin: 0 10px; /* مسافة بين الأيقونات */
+    display: inline-block;
+}
+
+#ContactCon img {
+    width: 40px; /* حجم الأيقونات */
+    height: 40px;
+    transition: transform 0.3s ease; /* تأثير عند التمرير */
+}
+
+#ContactCon img:hover {
+    transform: scale(1.1); /* تكبير الأيقونة عند التمرير */
+}
+</style>
+<header>
+    <button id="contact">contact us</button>
+    {% if user.is_superuser %}
+    <a href="{% url 'admin:index' %}" target="_blank">({{ user.username }}) adminstration</a>
+    {% endif %}
+    <a href="{% url 'logout' %}">Logout ({{ user.username }})</a>
+    <h1>cinemaN</h1>
+    
+</header>
+<div id="ContactCon" class="disappear">
+    <a href="tel:+01203661364" target="_blank">
+        <img src="{% static 'img/phone.png' %}" alt="phone">
+    </a>
+
+    <a href="https://www.facebook.com/profile.php?id=61557162630280&mibextid=ZbWKwL" target="_blank">
+        <img src="{% static 'img/face.png' %}"  alt="facebook">
+    </a>
+
+    <a href="https://wa.me/message/WP2OSZA2GXKEI1" target="_blank">
+        <img src="{% static 'img/whats.png' %}" alt="WhatsApp">
+    </a>
+    <br>
+</div>
+<br>
+
+
+<script>
+    document.getElementById('contact').addEventListener('click',()=>{
+        document.getElementById('ContactCon').classList.toggle('disappear')
+    })
+</script>

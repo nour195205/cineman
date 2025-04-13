@@ -1,0 +1,226 @@
+{% block con %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ film.name }} - تفاصيل الفيلم</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b; /* أحمر مرجاني */
+            --secondary-color: #4ecdc4; /* فيروزي */
+            --accent-color: #ffe66d; /* أصفر دافئ */
+            --dark-color: #2d3436; /* رمادي غامق */
+            --light-color: #ffffff; /* أبيض */
+            --border-radius: 15px;
+            --box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(120deg, #dfe6e9 0%, #b2bec3 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .films-container {
+            max-width: 800px; /* عرض أقل لأنه تفاصيل فيلم واحد */
+            margin: 0 auto;
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            transition: var(--transition);
+        }
+
+        .film-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border: 3px solid var(--primary-color);
+        }
+
+        .film-details {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .film-name {
+            color: var(--dark-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .film-details h4 {
+            color: #636e72;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        h4.ticket-booking {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+
+        .error {
+            color: #d63031; /* أحمر غامق للخطأ */
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            background: #fab1a0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        label {
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: var(--primary-color);
+            color: var(--light-color);
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            color: var(--dark-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        p.no-parties {
+            color: #636e72;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* تصميم متجاوب */
+        @media (max-width: 768px) {
+            .films-container {
+                padding: 20px;
+            }
+
+            .film-name {
+                font-size: 1.5rem;
+            }
+
+            .film-details h4 {
+                font-size: 1rem;
+            }
+
+            .film-image {
+                max-height: 300px;
+            }
+
+            h4.ticket-booking {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .films-container {
+                padding: 15px;
+            }
+
+            .film-name {
+                font-size: 1.2rem;
+            }
+
+            select, input[type="number"] {
+                max-width: 100%;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="films-container" id="container">
+        <img src="{{ film.image.url }}" alt="{{ film.name }}" class="film-image">
+        <div class="film-details">
+            <h3 class="film-name">{{ film.name }}</h3>
+            <h4>{{ film.category }}</h4>
+            <h4>{{ film.price }} جنيه</h4>
+            <h4>التقييم: {{ film.rate }}/5</h4>
+        </div>
+
+        <h4 class="ticket-booking">حجز التذاكر</h4>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if parties %}
+            <form method="post">
+                {% csrf_token %}
+                {% if not party %}
+                    <label for="party">اختر حفلة:</label>
+                    <select name="party" id="party">
+                        {% for party in parties %}
+                        {% if party.seats != 0%}
+                            <option value="{{ party.id }}" {% if party == selected_party %}selected{% endif %}>
+                                {{ party.name }} - {{ party.date_time }} (المقاعد المتاحة: {{ party.seats }})
+                            </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                {{ form.as_p }}
+                <button type="submit" class="btn">احجز الآن</button>
+            </form>
+        {% else %}
+            <p class="no-parties">لا توجد حفلات حاليًا لهذا الفيلم.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
+{% endblock con %}
